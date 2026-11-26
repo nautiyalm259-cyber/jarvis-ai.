@@ -1,200 +1,349 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>JARVIS - Manish Sir</title>
+<meta name="theme-color" content="#020914">
+<title>JARVIS 3.0 - Manish Sir</title>
 
 <style>
 *{box-sizing:border-box}
 body{
- margin:0;background:#020914;color:#00cfff;
+ margin:0;background:#020914;color:#00d9ff;
  font-family:Arial,sans-serif;text-align:center;
- min-height:100vh;overflow-x:hidden;
+ min-height:100vh;
 }
-.app{padding:25px 15px;max-width:600px;margin:auto}
-h1{letter-spacing:8px;text-shadow:0 0 15px #00cfff}
-.sub{font-size:12px;letter-spacing:4px;color:#76cfff}
+.app{max-width:600px;margin:auto;padding:25px 15px}
+h1{font-size:36px;letter-spacing:8px;text-shadow:0 0 20px #00cfff}
+.sub{letter-spacing:4px;color:#8bdfff;font-size:12px}
 .core{
- width:210px;height:210px;border-radius:50%;
- margin:35px auto;border:3px solid #00cfff;
+ width:200px;height:200px;border:3px solid #00d9ff;
+ border-radius:50%;margin:35px auto;
  display:grid;place-items:center;
- box-shadow:0 0 20px #00cfff,inset 0 0 25px #0077ff;
- animation:pulse 2s infinite;
+ box-shadow:0 0 25px #00cfff,inset 0 0 30px #0077ff;
 }
 .core-inner{
- width:150px;height:150px;border-radius:50%;
- border:2px solid #168fff;
- display:grid;place-items:center;
- font-size:65px;
- background:radial-gradient(circle,#064b78,#020914);
+ width:145px;height:145px;border:2px solid #168fff;
+ border-radius:50%;display:grid;place-items:center;
+ font-size:55px;background:radial-gradient(circle,#064b78,#020914);
 }
+.listening .core,.speaking .core{animation:pulse .8s infinite alternate}
 @keyframes pulse{
- 50%{box-shadow:0 0 45px #00cfff,inset 0 0 40px #0077ff}
+ to{transform:scale(1.06);box-shadow:0 0 55px #00eaff,inset 0 0 45px #0077ff}
 }
+.panel{
+ background:#041a2b;border:1px solid #087da9;
+ border-radius:15px;padding:18px;margin:15px 0;
+ box-shadow:0 0 12px #003b60;
+}
+h2,h3{color:#00d9ff}
+#status{color:#55eaff;font-weight:bold}
+#output{color:white;min-height:55px;line-height:1.6}
 button{
- background:#003c60;color:white;
- border:1px solid #00cfff;border-radius:30px;
- padding:14px 22px;margin:8px;font-size:15px;
+ background:#003b60;color:white;border:1px solid #00cfff;
+ border-radius:25px;padding:13px 17px;margin:5px;
+ font-size:14px;
 }
 button:active{background:#087da9}
-.panel{
- border:1px solid #087da9;border-radius:12px;
- padding:16px;margin:15px 0;
- background:#04182a;
+input,select{
+ width:100%;padding:13px;margin:8px 0;
+ border-radius:10px;border:1px solid #00cfff;
+ background:#031423;color:white;font-size:15px;
 }
-#status{color:#75eaff}
-#output{color:white;min-height:50px}
-.footer{font-size:11px;color:#568ba8;margin-top:30px}
+.chat{display:flex;gap:5px}
+.chat input{flex:1;min-width:0}
+.chat button{margin:8px 0}
+#history{
+ text-align:left;color:white;max-height:180px;
+ overflow:auto;font-size:14px;line-height:1.6;
+}
+.small{font-size:12px;color:#85b9d4;line-height:1.8}
+.footer{color:#5489a8;font-size:11px;margin-top:25px}
 </style>
 </head>
 
 <body>
-<div class="app">
+<div class="app" id="app">
 
 <h1>J.A.R.V.I.S</h1>
-<div class="sub">PERSONAL AI SYSTEM</div>
+<div class="sub">PERSONAL AI SYSTEM 3.0</div>
 
 <div class="core">
  <div class="core-inner">◉</div>
 </div>
 
 <div class="panel">
- <h3>MANISH SIR</h3>
+ <h2>MANISH SIR</h2>
  <p id="status">SYSTEM ONLINE</p>
- <p id="output">Awaiting your command, Sir.</p>
+ <div id="output">Good morning, Manish Sir. JARVIS is online. All systems are operational. How may I assist you today?</div>
 </div>
 
 <button onclick="greet()">GREETING</button>
 <button onclick="startListening()">🎙 ACTIVATE</button>
-<button onclick="stopListening()">STOP</button>
+<button onclick="stopAssistant()">STOP</button>
 
 <div class="panel">
- <p>VOICE ASSISTANT</p>
- <p>Hindi + English Support</p>
- <p>JARVIS VERSION 1.0</p>
+ <h3>CHAT WITH JARVIS</h3>
+ <div class="chat">
+  <input id="message" placeholder="Type your command..."
+  onkeydown="if(event.key==='Enter')sendText()">
+  <button onclick="sendText()">SEND</button>
+ </div>
+ <div id="history"></div>
+</div>
+
+<div class="panel">
+ <h3>VOICE SETTINGS</h3>
+ <select id="language">
+  <option value="hi-IN">Hindi India</option>
+  <option value="en-IN">English India</option>
+ </select>
+ <select id="voiceSelect">
+  <option value="">Default Phone Voice</option>
+ </select>
+ <button onclick="loadVoices()">REFRESH VOICES</button>
+</div>
+
+<div class="panel">
+ <h3>ELECTRONICS EXPERT MODE</h3>
+ <p class="small">
+ Diode | Transistor | Resistor | Capacitor<br>
+ LED | Ohm's Law | Voltage | Current<br>
+ Series Circuit | Parallel Circuit | Multimeter
+ </p>
+</div>
+
+<div class="panel">
+ <h3>COMMAND CENTER</h3>
+ <p class="small">
+ What is the time?<br>
+ Aaj ki date batao<br>
+ Diode kya hota hai?<br>
+ Explain transistor<br>
+ What is Ohm's law?<br>
+ Open YouTube<br>
+ Google par electronics search karo<br>
+ Calculate 25 plus 30
+ </p>
 </div>
 
 <div class="footer">
- CREATED FOR MANISH SIR | ALL SYSTEMS READY
+ JARVIS VERSION 3.0<br>
+ CREATED FOR MANISH SIR
 </div>
-
 </div>
 
 <script>
-const statusBox=document.getElementById("status");
-const output=document.getElementById("output");
+const $=id=>document.getElementById(id);
+let recognition=null;
+let voices=[];
 
-function speak(message){
- output.innerText=message;
+function status(t){$("status").innerText=t}
+function show(t){$("output").innerText=t}
+
+function addHistory(who,msg){
+ const p=document.createElement("p");
+ p.textContent=who+": "+msg;
+ $("history").prepend(p);
+}
+
+function loadVoices(){
+ voices=speechSynthesis.getVoices();
+ const s=$("voiceSelect");
+ s.innerHTML='<option value="">Default Phone Voice</option>';
+ voices.forEach((v,i)=>{
+  const o=document.createElement("option");
+  o.value=i;
+  o.textContent=v.name+" ("+v.lang+")";
+  s.appendChild(o);
+ });
+}
+speechSynthesis.onvoiceschanged=loadVoices;
+loadVoices();
+
+function speak(text){
+ show(text);
  speechSynthesis.cancel();
-
- const speech=new SpeechSynthesisUtterance(message);
- speech.lang="en-IN";
- speech.rate=0.9;
- speech.pitch=0.85;
-
- const voices=speechSynthesis.getVoices();
- const indianVoice=voices.find(v=>v.lang==="en-IN")
- ||voices.find(v=>v.lang==="hi-IN");
-
- if(indianVoice) speech.voice=indianVoice;
-
- speechSynthesis.speak(speech);
+ const u=new SpeechSynthesisUtterance(text);
+ u.lang=$("language").value;
+ u.rate=.92;
+ u.pitch=.9;
+ const selected=$("voiceSelect").value;
+ if(selected!==""&&voices[selected])u.voice=voices[selected];
+ status("JARVIS SPEAKING");
+ $("app").classList.add("speaking");
+ u.onend=()=>{
+  $("app").classList.remove("speaking");
+  status("SYSTEM ONLINE");
+ };
+ u.onerror=()=>{
+  $("app").classList.remove("speaking");
+  status("SYSTEM ONLINE");
+ };
+ speechSynthesis.speak(u);
 }
 
 function greet(){
  speak("Good morning, Manish Sir. JARVIS is online. All systems are operational. How may I assist you today?");
 }
 
-let recognition=null;
-
 function startListening(){
- const SR=window.SpeechRecognition||
- window.webkitSpeechRecognition;
-
+ const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
  if(!SR){
-  speak("Voice recognition is not supported in this browser.");
+  speak("Voice recognition is not supported in this browser. Please use Chrome.");
   return;
  }
-
+ if(recognition)recognition.abort();
  recognition=new SR();
- recognition.lang="en-IN";
+ recognition.lang=$("language").value;
  recognition.continuous=false;
  recognition.interimResults=false;
 
  recognition.onstart=()=>{
-  statusBox.innerText="LISTENING...";
+  status("LISTENING...");
+  $("app").classList.add("listening");
  };
-
- recognition.onresult=(event)=>{
-  const command=event.results[0][0].transcript.toLowerCase();
-  output.innerText="You: "+command;
-  processCommand(command);
+ recognition.onresult=e=>{
+  const text=e.results[0][0].transcript;
+  addHistory("MANISH SIR",text);
+  processCommand(text);
  };
-
- recognition.onerror=()=>{
-  statusBox.innerText="VOICE ERROR";
+ recognition.onerror=e=>{
+  status("VOICE ERROR: "+e.error);
+  $("app").classList.remove("listening");
  };
-
  recognition.onend=()=>{
-  statusBox.innerText="SYSTEM ONLINE";
+  $("app").classList.remove("listening");
+  if($("status").innerText==="LISTENING...")status("SYSTEM ONLINE");
  };
-
- recognition.start();
+ try{recognition.start()}
+ catch(e){status("PLEASE TRY AGAIN")}
 }
 
-function stopListening(){
- if(recognition) recognition.stop();
+function stopAssistant(){
+ if(recognition)recognition.abort();
  speechSynthesis.cancel();
- statusBox.innerText="SYSTEM ONLINE";
- output.innerText="Assistant stopped.";
+ $("app").classList.remove("listening","speaking");
+ status("SYSTEM ONLINE");
+ show("Assistant stopped, Manish Sir.");
 }
 
-function processCommand(command){
+function sendText(){
+ const input=$("message");
+ const text=input.value.trim();
+ if(!text)return;
+ input.value="";
+ addHistory("MANISH SIR",text);
+ processCommand(text);
+}
 
- if(command.includes("hello")||
- command.includes("jarvis")){
-  speak("Hello Manish Sir. I am ready.");
+const knowledge={
+ diode:"A diode is a semiconductor device that mainly allows current to flow in one direction. हिंदी में, डायोड एक अर्धचालक युक्ति है जो मुख्य रूप से एक दिशा में करंट प्रवाहित होने देती है।",
+ transistor:"A transistor is a semiconductor device used for switching and amplification. ट्रांजिस्टर का उपयोग switching और amplification के लिए होता है।",
+ resistor:"A resistor opposes the flow of electric current. रेसिस्टर करंट के प्रवाह का विरोध करता है।",
+ capacitor:"A capacitor stores electrical energy in an electric field. कैपेसिटर विद्युत ऊर्जा को स्टोर करता है।",
+ led:"LED stands for Light Emitting Diode. यह करंट प्रवाहित होने पर प्रकाश देता है।",
+ "ohm": "Ohm's law states that voltage equals current multiplied by resistance. Formula V equals I into R.",
+ voltage:"Voltage is the electrical potential difference between two points. इसे वोल्ट में मापा जाता है।",
+ current:"Electric current is the rate of flow of electric charge. इसे Ampere में मापा जाता है।",
+ multimeter:"A multimeter measures electrical quantities such as voltage, current and resistance.",
+ "series circuit":"In a series circuit components are connected in a single path. सभी components में समान current बहता है।",
+ "parallel circuit":"In a parallel circuit components are connected across separate branches. हर branch पर समान voltage होता है।"
+};
+
+function calculate(text){
+ const normalized=text.toLowerCase()
+ .replace(/multiplied by|multiply by|into/g,"*")
+ .replace(/divided by|divide by/g,"/")
+ .replace(/plus/g,"+")
+ .replace(/minus/g,"-")
+ .replace(/[^0-9.+*/ -]/g,"")
+ .trim();
+
+ const m=normalized.match(/^(-?\d+(?:\.\d+)?)\s*([+\-*/])\s*(-?\d+(?:\.\d+)?)$/);
+ if(!m)return null;
+ const a=Number(m[1]),b=Number(m[3]);
+ let answer;
+ switch(m[2]){
+  case "+":answer=a+b;break;
+  case "-":answer=a-b;break;
+  case "*":answer=a*b;break;
+  case "/":answer=b===0?null:a/b;break;
+ }
+ return answer===null?"Cannot divide by zero":String(answer);
+}
+
+function processCommand(raw){
+ const c=raw.toLowerCase().trim();
+
+ if(c.includes("stop")||c.includes("रुको")){
+  stopAssistant();return;
  }
 
- else if(command.includes("time")){
-  speak("The current time is "+
-  new Date().toLocaleTimeString("en-IN"));
+ if(c.includes("time")||c.includes("समय")||c.includes("बजे")){
+  speak("Manish Sir, the current time is "+new Date().toLocaleTimeString("en-IN"));
+  return;
  }
 
- else if(command.includes("date")){
-  speak("Today's date is "+
-  new Date().toLocaleDateString("en-IN"));
+ if(c.includes("date")||c.includes("तारीख")){
+  speak("Today's date is "+new Date().toLocaleDateString("en-IN"));
+  return;
  }
 
- else if(command.includes("youtube")){
+ if(c.includes("hello")||c.includes("namaste")||c.includes("नमस्ते")){
+  speak("Namaste Manish Sir. JARVIS is ready.");
+  return;
+ }
+
+ if(c.includes("who are you")||c.includes("tum kaun ho")||c.includes("कौन हो")){
+  speak("I am JARVIS, your personal assistant, created for Manish Sir.");
+  return;
+ }
+
+ if(c.includes("youtube")||c.includes("यूट्यूब")){
   speak("Opening YouTube, Manish Sir.");
-  window.open("https://youtube.com","_blank");
+  window.open("https://www.youtube.com/","_blank");
+  return;
  }
 
- else if(command.includes("google")){
-  speak("Opening Google, Manish Sir.");
-  window.open("https://google.com","_blank");
+ if(c.includes("google par")||c.includes("google pe")||c.includes("search")||c.includes("खोजो")||c.includes("सर्च")){
+  let q=raw.replace(/google par|google pe|search for|search|खोजो|सर्च/gi,"").trim();
+  if(!q)q=raw;
+  speak("Searching the internet, Manish Sir.");
+  window.open("https://www.google.com/search?q="+encodeURIComponent(q),"_blank");
+  return;
  }
 
- else if(command.includes("how are you")){
-  speak("I am fully operational, Manish Sir.");
+ if(c==="google"||c.includes("open google")||c.includes("google kholo")){
+  speak("Opening Google.");
+  window.open("https://www.google.com/","_blank");
+  return;
  }
 
- else if(command.includes("who are you")){
-  speak("I am JARVIS, your personal AI assistant.");
+ for(const key in knowledge){
+  if(c.includes(key)){
+   speak(knowledge[key]);
+   return;
+  }
  }
 
- else if(command.includes("namaste")||
- command.includes("hello sir")){
-  speak("Namaste Manish Sir. How can I help you?");
+ if(c.includes("electronics")||c.includes("इलेक्ट्रॉनिक्स")){
+  speak("Electronics is the study of electronic components and circuits such as diodes, transistors, resistors and capacitors.");
+  return;
  }
 
- else{
-  speak("Sorry Sir, this command is not available yet.");
+ if(/\d/.test(c)&&/[+\-*/]|plus|minus|multiply|divide/.test(c)){
+  const result=calculate(c);
+  speak(result===null?"Please give a simple calculation.":"The answer is "+result);
+  return;
  }
+
+ if(c.includes("help")||c.includes("मदद")){
+  speak("Ask me about time, date, electronics, calculations, or open websites.");
+  return;
+ }
+
+ speak("Sorry Manish Sir. I do not have the answer in my local knowledge base yet. Please try another command.");
 }
 </script>
 </body>
